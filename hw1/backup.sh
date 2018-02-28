@@ -28,7 +28,9 @@ done
 mkdir $CATALAGUENAME
 for EX in $EXTENSION;
 do
-	find ~/ -name "*.$EX" -type f -exec cp {} ./$CATALAGUENAME/ \;
+
+	find ~/ -name "*.$EX" -type f -exec cp --backup=t {} ./$CATALAGUENAME/ \; 2>&1 | grep -v "Permission denied"
+
 done
 
 tar -czf $ARCHIVENAME.tar.gz $CATALAGUENAME
