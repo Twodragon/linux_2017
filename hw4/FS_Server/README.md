@@ -26,3 +26,4 @@ in double addressing.
 * save to save all changes made in the filesystem
 * exit to save and exit
 * help to see help message
+* stop to stop server daemon

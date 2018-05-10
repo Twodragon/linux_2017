@@ -15,7 +15,7 @@
 #include "Server.h"
 
 void Server_run() {
-    //daemon(0, 0);
+    daemon(0, 0);
     int sock, listener;
     struct sockaddr_in addr;
 
