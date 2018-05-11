@@ -169,6 +169,7 @@ void Server_run() {
         close(sock);
         close_filesystem(name, filesystem, sock);
         free(name);
+		free(path);
     }
 
 }
