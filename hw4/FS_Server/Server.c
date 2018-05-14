@@ -14,14 +14,19 @@
 #include "Network_utils.h"
 #include "Server.h"
 
+#define COMMAND_SIZE 32
+#define FIRST_ARG_SIZE 128
+#define SECOND_ARG_SIZE 1024
+#define INPUT_SIZE 1186
+
 void Server_run() {
-    daemon(0, 0);
+    //daemon(0, 0);
     int sock, listener;
     struct sockaddr_in addr;
 
     listener = socket(AF_INET, SOCK_STREAM, 0);
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(8888);
+    addr.sin_port = htons(8901);
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     bind(listener, (struct sockaddr *) &addr, sizeof(addr));
     listen(listener, 1);
@@ -31,28 +36,25 @@ void Server_run() {
         sock = accept(listener, NULL, NULL);
 
         char * path = get_answer(sock);
-        char* name = malloc(sizeof(char) * (strlen(path)+3));
+        char* name = malloc(strlen(path) +3);
         strncpy(name, "./", 2);
         strncpy(&name[2], path, strlen(path) + 1);
 
         void* filesystem = get_memory_for_filesystem();
 
-        char command[32];
-        char first_argument[128];
-        char second_argument[1024];
-        char input_line[1184];
-        memset(command, 0, 32);
-        memset(first_argument, 0, 128);
-        memset(second_argument, 0, 1024);
-        memset(input_line, 0, 1184);
+        char command[COMMAND_SIZE + 1]; // +1 for terminating symbol
+        char first_argument[FIRST_ARG_SIZE + 1];
+        char second_argument[SECOND_ARG_SIZE + 1];
+        char input_line[INPUT_SIZE + 1];
 
         struct inode* root = open_filesystem(name, (char*)filesystem, sock);
 
         struct superblock* sb = (struct superblock *) filesystem;
 
         struct inode** current_directory = &root;
-        while (recv(sock, input_line, 1184, 0) != 0) {
-            int number_of_arguments = sscanf(input_line, "%s %s %s", command, first_argument, second_argument);
+        while (recv(sock, input_line, INPUT_SIZE, 0) != 0) {
+            int number_of_arguments = safe_parse_input(sock, input_line, COMMAND_SIZE, FIRST_ARG_SIZE, SECOND_ARG_SIZE,
+                                                       command, first_argument, second_argument);
 
             if(strcmp(command, "ls") == 0){
                 char* output = ls(sb, *current_directory);
@@ -163,13 +165,18 @@ void Server_run() {
 
             else if (strcmp(command, "stop") == 0){
                 running = 0;
+                send_answer(sock, "");
                 break;
+            }
+
+            else { //in case of unknown command or a misspell
+                send_answer(sock, "");
             }
         }
         close(sock);
         close_filesystem(name, filesystem, sock);
+        free(path);
         free(name);
-		free(path);
     }
 
 }

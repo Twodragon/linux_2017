@@ -50,7 +50,7 @@ unsigned int put_data_in_blocks(struct superblock *sb, char* data, int size_of_d
 
 
 char* read_data_in_blocks(struct superblock *sb, struct block* address_blocks, int size_of_data){
-    char* data = (char*) malloc(sizeof(char)*(size_of_data +1));
+    char* data = (char*) malloc(size_of_data + 1);
     for(int k = 0; k < size_of_data; k++) {
         //one address block holds links to (number_of_bytes_in_block / sizeof(char *)) blocks.
         //each block can store (having sizeof(char) = 1)  number_of_bytes_in_block chars;

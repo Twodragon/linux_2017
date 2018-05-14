@@ -233,7 +233,7 @@ char* get_file_names_from_directory(struct superblock *sb, struct inode* directo
 
         output_length += directory->number_of_files_in_directory - 1;
 
-        char* output_str = malloc(sizeof(char) * output_length + 1);
+        char* output_str = malloc(output_length + 1);
         int i = 0;
         for (int k = 0; k < directory->number_of_files_in_directory; k++){
             char* inode_name = get_file_name(sb, inodes_addresses[k]);
