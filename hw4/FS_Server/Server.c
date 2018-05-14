@@ -20,13 +20,13 @@
 #define INPUT_SIZE 1186
 
 void Server_run() {
-    //daemon(0, 0);
+    daemon(0, 0);
     int sock, listener;
     struct sockaddr_in addr;
 
     listener = socket(AF_INET, SOCK_STREAM, 0);
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(8901);
+    addr.sin_port = htons(8888);
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
     bind(listener, (struct sockaddr *) &addr, sizeof(addr));
     listen(listener, 1);

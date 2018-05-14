@@ -22,7 +22,7 @@ void Client_run() {
     struct sockaddr_in addr;
     sock = socket(AF_INET, SOCK_STREAM, 0);
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(8901);
+    addr.sin_port = htons(8888);
     addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
     connect(sock, (struct sockaddr *) &addr, sizeof(addr));
 
